@@ -2,6 +2,9 @@ var firebase = require("firebase");
 var Promise = require('promise');
 var colors = require('colors');
 
+var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0WkQzTkIiLCJhdWQiOiIyMjgzNzYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJ3aHIgd3BybyB3bnV0IHdzbGUgd3dlaSB3c29jIHdhY3Qgd3NldCB3bG9jIiwiZXhwIjoxNDc2MjE3NDcxLCJpYXQiOjE0NzYxODg2NzF9.0PDT5nNnyUYjGLDJBRLdb6G_-gF9w8Mdr9fc0lBds7A"
+var request = require('request');
+
 var config = {
     apiKey: "AIzaSyDc1JrMHS1EvfQtHyAMhzQ91zI9Z4trUBY",
     authDomain: "fir-6ecce.firebaseapp.com",
@@ -111,12 +114,22 @@ pushers.push(function fitBit(completedActivity, userId) {
 
     console.log(new Date(lastChange.dateTime), new Date(firstChange.dateTime))
 
-    fitbitData.ActivityId = 90001;
+    fitbitData.activityId = 90001;
     fitbitData.startTime = startDateTimeStr.substring(11, 19);
     fitbitData.date = startDateTimeStr.substring(0, 10);
     fitbitData.durationMillis = millis;
     fitbitData.distance = accDist;
-    fitbitData.distanceUnit = 'km/h';
+
+    request.post({
+      url: 'https://api.fitbit.com/1/user/-/activities.json',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept-Locale': 'de'
+      },
+      formData: fitbitData
+    }, function(err, res, body) {
+        console.log(body);
+    });
 
     console.log('pushing to fitbit', fitbitData);
 });
