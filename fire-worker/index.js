@@ -76,7 +76,7 @@ var logActivity = function (snapshot) {
     var rideRef = firebase.database().ref('rides/' + changedUserId);
 
     rideRef.on('child_changed', function (snapshot) {
-         activity[changedUserId].push({ dateTime: new Date(), data_val: snapshot.val(), data_key: snapshot.key });
+        activity[changedUserId].push({ dateTime: new Date(), data_val: snapshot.val(), data_key: snapshot.key });
 
         console.log('data'.green, { dateTime: new Date(), data_val: snapshot.val(), data_key: snapshot.key })
 
@@ -84,4 +84,55 @@ var logActivity = function (snapshot) {
 
 }
 
-var logActivity = function (snapshot)
+var pushers = [];
+
+pushers.push(function COBICloudArchive(completedActivity) {
+    console.log('Pushing activity to S3 for archival purposes');
+});
+
+pushers.push(function fitBit(completedActivity, userId) {
+    var fitbitData = {};
+
+    var firstChange = completedActivity[0];
+    var lastChange = completedActivity[completedActivity.length - 1];
+    var startDateTimeStr = new Date(firstChange.dateTime).toISOString();
+
+
+    var accDist;
+    for (var i = completedActivity.length - 1; i >= 0; i--) {
+        var change = completedActivity[i];
+        if (change.data_key === 'accDist') {
+            accDist = change.data_val;
+            break;
+        }
+    }
+
+    var millis = new Date(lastChange.dateTime) - new Date(firstChange.dateTime);
+
+    console.log(new Date(lastChange.dateTime),  new Date(firstChange.dateTime))
+
+    fitbitData.activityName = 'COBI Ride';
+
+    fitbitData.startTime = startDateTimeStr.substring(11, 19);
+    fitbitData.date = startDateTimeStr.substring(0, 10);
+    fitbitData.durationMillis = millis;
+    fitbitData.distance = accDist;
+    fitbitData.distanceUnit = 'km/h';
+
+    console.log('pushing to fitbit', fitbitData);
+});
+
+
+var aggAndPush = function (snapshot) {
+    var changedUserId = snapshot.key;
+    var completedActivity = activity[changedUserId];
+
+    pushers.forEach(function (pusher) {
+        pusher(completedActivity, changedUserId);
+    }, this);
+
+
+
+
+};
+
