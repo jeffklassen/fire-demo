@@ -1,0 +1,3 @@
+"permissions": [
+  "gcm", "storage" // Other permissions, like "storage"
+]
