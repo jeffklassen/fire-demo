@@ -2,7 +2,7 @@ var firebase = require("firebase");
 var Promise = require('promise');
 var colors = require('colors');
 
-var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0WkQzTkIiLCJhdWQiOiIyMjgzNzYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJ3aHIgd3BybyB3bnV0IHdzbGUgd3dlaSB3c29jIHdhY3Qgd3NldCB3bG9jIiwiZXhwIjoxNDc2MjE3NDcxLCJpYXQiOjE0NzYxODg2NzF9.0PDT5nNnyUYjGLDJBRLdb6G_-gF9w8Mdr9fc0lBds7A"
+var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0WkQzTkIiLCJhdWQiOiIyMjgzNzYiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJ3aHIgd3BybyB3bnV0IHdzbGUgd3dlaSB3c29jIHdhY3Qgd3NldCB3bG9jIiwiZXhwIjoxNDc2MjE5Nzk1LCJpYXQiOjE0NzYxOTA5OTV9.dqUsbrmQbVVXqjO7Djc9MvWR-CO_KLZcBvkiruG81-k"
 var request = require('request');
 
 var config = {
@@ -119,6 +119,7 @@ pushers.push(function fitBit(completedActivity, userId) {
     fitbitData.date = startDateTimeStr.substring(0, 10);
     fitbitData.durationMillis = millis;
     fitbitData.distance = accDist;
+    fitbitData.manualCalories = 1024;
 
     request.post({
       url: 'https://api.fitbit.com/1/user/-/activities.json',
