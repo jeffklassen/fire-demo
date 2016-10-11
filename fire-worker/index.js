@@ -109,10 +109,9 @@ pushers.push(function fitBit(completedActivity, userId) {
 
     var millis = new Date(lastChange.dateTime) - new Date(firstChange.dateTime);
 
-    console.log(new Date(lastChange.dateTime),  new Date(firstChange.dateTime))
+    console.log(new Date(lastChange.dateTime), new Date(firstChange.dateTime))
 
-    fitbitData.activityName = 'COBI Ride';
-
+    fitbitData.ActivityId = 90001;
     fitbitData.startTime = startDateTimeStr.substring(11, 19);
     fitbitData.date = startDateTimeStr.substring(0, 10);
     fitbitData.durationMillis = millis;
