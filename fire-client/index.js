@@ -42,11 +42,12 @@ firebase
 
             });
     });
-
+var userid;
 firebase
     .auth()
     .onAuthStateChanged(function (user) {
-        var userid = user.uid;
+        userid = user.uid;
+
         if (user) {
             user.providerData.forEach(function (profile) {
                 console.log('profile', profile);
@@ -54,27 +55,24 @@ firebase
 
             });
 
-            var ref = firebase.database().ref('rides/' + userid + '/1');
+            firebase.database().ref('currentActive/' + userid).set(true);
 
+
+            // ref.set({ datetime: datetime, speed: 10 });
+            var dist = 0;
             setInterval(function () {
-                console.log('entering interval')
-                var currentdate = new Date();
-                var datetime = currentdate.getDate() + "/"
-                    + (currentdate.getMonth() + 1) + "/"
-                    + currentdate.getFullYear() + " @ "
-                    + currentdate.getHours() + ":"
-                    + currentdate.getMinutes() + ":"
-                    + currentdate.getSeconds();
-                console.log(datetime);
+                dist = dist + 1.6;
 
-
-
-                ref.push({ datetime: datetime, speed: 10 });
+                firebase.database().ref('rides/' + userid).set({lat: 1, lon: -6, speed: 8, accDist: dist, cad: Math.random() * (100-0)});
             }, 1000);
-
 
         } else {
             console.log('User is not logged in'.red, user)
         }
     });
 
+process.on('SIGINT', (code) => {
+  firebase.database().ref('currentActive/' + userid).set(null);
+
+  process.exit();
+});
